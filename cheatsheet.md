@@ -1,6 +1,6 @@
 # Markdown cheatsheet
 
-[Text](#text) · [Headings](#headings) · [Lists](#lists) · [Code](#code) · [Links & images](#links--images) · [Tables](#tables) · [Misc](#misc) · [More text & lists](#more-text--lists) · [More links & images](#more-links--images) · [More tables](#more-tables) · [HTML fallbacks](#html-fallbacks) · [GitHub flavoured](#github-flavoured) · [Obsidian, Notion & static sites](#obsidian-notion--static-sites)
+[Text](#text) · [Headings](#headings) · [Lists](#lists) · [Code](#code) · [Links & images](#links--images) · [Tables](#tables) · [Misc](#misc) · [More text & lists](#more-text--lists) · [More links & images](#more-links--images) · [More tables](#more-tables) · [HTML fallbacks](#html-fallbacks) · [GitHub flavoured](#github-flavoured) · [Obsidian & static sites](#obsidian--static-sites)
 
 ## Text
 
@@ -90,7 +90,7 @@ Escape a backtick with a backslash: `` \` `` — or wrap in double backticks.
 | Nested blockquote | `> > nested` |
 | List inside a blockquote | `> - item` |
 | Paragraph inside a list item | indent to the item's text (2 spaces after `- `, 3 after `1. `) |
-| Code block inside a list item | a fenced block at that same indent, or indent 8 spaces |
+| Code block inside a list item | a fenced block at that same indent, or indent 4 more than the item's text |
 | Setext headings | `Title` + `=====` (H1) / `-----` (H2) underline |
 | Escapable characters | `` \ ` * _ { } [ ] ( ) # + - . ! \| `` |
 
@@ -133,7 +133,7 @@ Work in most renderers, including ones without the pandoc extensions above.
 | Mermaid diagram | ```` ```mermaid ```` |
 | Math | `$E=mc^2$` inline · `$$…$$` block |
 
-## Obsidian, Notion & static sites
+## Obsidian & static sites
 
 | What | Syntax |
 |---|---|

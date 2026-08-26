@@ -2,8 +2,8 @@
 
 A system-wide Markdown cheatsheet popup for macOS, as an [Alfred](https://www.alfredapp.com)
 workflow. Press **⌃⌥M** anywhere to instantly show a floating window with a
-rendered Markdown cheatsheet; press **Esc** to dismiss it. Type **`md`** into
-Alfred to jump straight to one section (`md tables`), and **⌘↩** opens the
+rendered Markdown cheatsheet; press **Esc** to dismiss it. Type **`mdc`** into
+Alfred to jump straight to one section (`mdc tables`), and **⌘↩** opens the
 cheatsheet file so you can edit it.
 
 This is a port of [Aaron Schiff's md-cheatsheet](https://github.com/aaronschiff/md-cheatsheet),
@@ -19,30 +19,32 @@ more content.
 Requires macOS and Alfred 5.5 or later with the
 [Powerpack](https://www.alfredapp.com/powerpack/) (workflows need it).
 
-1. Download [`Markdown Cheatsheet.alfredworkflow`](https://github.com/jaygoldman/md-cheatsheet/raw/main/Markdown%20Cheatsheet.alfredworkflow).
+1. Download `Markdown-Cheatsheet.alfredworkflow` from the
+   [latest release](https://github.com/jaygoldman/md-cheatsheet/releases/latest).
 2. Double-click it; Alfred will ask to import it.
-3. Press **⌃⌥M**, or type `md` into Alfred.
+3. Press **⌃⌥M**, or type `mdc` into Alfred.
 
 If ⌃⌥M clashes with something else on your Mac, open the workflow in Alfred
-Preferences and change the hotkey on the leftmost (Hotkey) object.
+Preferences and change the hotkey on the leftmost (Hotkey) object. The
+keyword can be changed in **Configure Workflow…**.
 
 ## Usage
 
 | Key | Action |
 |---|---|
 | ⌃⌥M (anywhere) | Show the whole cheatsheet |
-| `md` ⏎ (in Alfred) | Show the whole cheatsheet |
-| `md tables` (in Alfred) | List matching sections; ⏎ shows just that section |
+| `mdc` ⏎ (in Alfred) | Show the whole cheatsheet |
+| `mdc tables` (in Alfred) | List matching sections; ⏎ shows just that section |
 | Esc | Close the popup |
 | ⌘↩ (in the popup) | Open the cheatsheet file in your default Markdown editor |
 
 The section list is built from the `## ` headings in the cheatsheet, so any
-section you add to the file shows up in `md` automatically.
+section you add to the file shows up in `mdc` automatically.
 
 The top of the cheatsheet also has a row of `[Section](#section)` links for
 when the file is viewed on GitHub or in a Markdown editor. Alfred's Text View
 doesn't follow in-document anchors (they'd just show as literal text), so the
-workflow strips that line for the popup — `md <section>` is the Alfred-native
+workflow strips that line for the popup — `mdc <section>` is the Alfred-native
 way to jump.
 
 ## Customising the cheatsheet
@@ -54,7 +56,8 @@ the workflow.
 To keep your own copy as the source of truth instead, clone this repo (or put
 a Markdown file anywhere you like) and point the workflow at it: open the
 workflow in Alfred Preferences, click **Configure Workflow…**, and set
-**Cheatsheet file**. Leave it empty to go back to the bundled copy.
+**Cheatsheet file**. Leave it empty to go back to the bundled copy. The same
+panel has **Keyword** if you'd rather type something other than `mdc`.
 
 ```sh
 git clone https://github.com/jaygoldman/md-cheatsheet.git ~/md-cheatsheet
@@ -83,13 +86,13 @@ appends, in roughly descending order of how often you'll need them:
   alignment; these work in renderers that lack the pandoc extensions.
 - **GitHub flavoured** — alerts (`> [!NOTE]`), auto-links, emoji shortcodes,
   diff and Mermaid fences, math.
-- **Obsidian, Notion & static sites** — wiki links, embeds, YAML front matter,
+- **Obsidian & static sites** — wiki links, embeds, YAML front matter,
   abbreviations, `[TOC]`.
 
 ## How it works
 
-- `workflow/info.plist` — the workflow. A Hotkey trigger (⌃⌥M) and an `md`
-  Script Filter both feed a **Text View** object in Markdown mode. A ⌘↩
+- `workflow/info.plist` — the workflow. A Hotkey trigger (⌃⌥M) and a keyword
+  Script Filter (`mdc` by default) both feed a **Text View** object in Markdown mode. A ⌘↩
   connection from the Text View runs `open` on the cheatsheet file.
 - `workflow/lib.sh` — shared helpers: resolves which file to show
   (`$cheatsheet_file` from the Configure panel, else the bundled
@@ -99,8 +102,9 @@ appends, in roughly descending order of how often you'll need them:
   (`- format — syntax`), 4-backtick fences become indented code blocks, and
   the anchor-link nav line is dropped. `cheatsheet.md` itself stays plain
   GitHub-flavoured Markdown.
-- `workflow/list.sh` — the Script Filter. Emits Alfred's items JSON: "Whole
-  cheatsheet" plus one item per section; Alfred filters them as you type.
+- `workflow/list.sh` — the Script Filter behind the keyword. Emits Alfred's
+  items JSON: "Whole cheatsheet" plus one item per section; Alfred filters
+  them as you type.
 - `workflow/show.sh` — the Text View's script. Prints
   `{"response": <markdown>, "footer": …}` for the whole file or the chosen
   section. Plain bash + awk + iconv, so there are no dependencies. If the file
@@ -109,9 +113,10 @@ appends, in roughly descending order of how often you'll need them:
   of truth; `build.sh` copies it into the workflow package.
 - `build.sh` — lints the plist, smoke-tests the scripts, and zips
   `info.plist`, `icon.png`, `lib.sh`, `show.sh`, `list.sh` and `cheatsheet.md`
-  into `Markdown Cheatsheet.alfredworkflow` (an `.alfredworkflow` is just a
-  flat zip). Re-run it before committing whenever those files change — the
-  committed package is what the install link serves.
+  into `Markdown-Cheatsheet.alfredworkflow` (an `.alfredworkflow` is just a
+  flat zip). The package isn't committed; each
+  [release](https://github.com/jaygoldman/md-cheatsheet/releases) has it
+  attached.
 
 ## Differences from the original
 
@@ -121,11 +126,11 @@ appends, in roughly descending order of how often you'll need them:
   window, so pressing ⌃⌥M again re-shows it rather than dismissing it.
   Clicking outside still dismisses it unless you've turned off Alfred's
   "hide on focus loss" setting.
-- **Section navigation** via `md <section>`, which the original didn't have.
+- **Section navigation** via `mdc <section>`, which the original didn't have.
 - **Renderer.** Alfred's Markdown renderer is not pandoc. It handles
   headings, emphasis, inline code, code blocks, lists and blockquotes, but
-  not tables, HTML, in-document anchor links or nested code fences — so
-  `show.sh` rewrites tables as bullet lists and nested fences as indented
+  not tables, HTML, in-document anchor links or nested code fences — so the
+  workflow rewrites tables as bullet lists and nested fences as indented
   blocks before handing the text to Alfred. A few pandoc-only extensions the
   original content demonstrates (subscript `H~2~O`, superscript `X^2^`,
   heading IDs, definition lists, footnotes) show their raw syntax in the
@@ -138,8 +143,8 @@ appends, in roughly descending order of how often you'll need them:
 ```sh
 git clone https://github.com/jaygoldman/md-cheatsheet.git
 cd md-cheatsheet
-./build.sh          # → "Markdown Cheatsheet.alfredworkflow"
-open "Markdown Cheatsheet.alfredworkflow"
+./build.sh          # → Markdown-Cheatsheet.alfredworkflow
+open Markdown-Cheatsheet.alfredworkflow
 ```
 
 ## Credits

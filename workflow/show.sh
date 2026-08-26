@@ -2,8 +2,8 @@
 # Text View script. Prints {"response": "<markdown>", "footer": "<text>"};
 # the Text View renders "response" as Markdown.
 #
-# With no $section the whole cheatsheet is shown (the ⌃⌥M hotkey, or "md" ⏎).
-# The "md" Script Filter (list.sh) sets the `section` variable on each item so
+# With no $section the whole cheatsheet is shown (the ⌃⌥M hotkey, or keyword ⏎).
+# The keyword's Script Filter (list.sh) sets the `section` variable on each item so
 # only that section is shown. Deliberately not argv: the hotkey would hand us
 # the macOS selection as $1.
 
@@ -31,11 +31,11 @@ if ! have_file; then
   exit 0
 fi
 
-name=$(basename "$file")
+name=$(basename -- "$file")
 if [[ -n "$section" ]] && text=$(section_text "$section"); then
-  footer="⎋ Close  ·  ⌘↩ Open $name to edit  ·  “md” for other sections"
+  footer="⎋ Close  ·  ⌘↩ Open $name to edit  ·  “${keyword:-mdc}” for other sections"
 else
-  text=$(cat "$file")
+  text=$(cat < "$file")           # unknown or empty section: whole cheatsheet
   footer="⎋ Close  ·  ⌘↩ Open $name to edit"
 fi
 

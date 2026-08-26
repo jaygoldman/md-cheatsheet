@@ -32,34 +32,43 @@ json_body() {
     }'
 }
 
-# The one place that understands the cheatsheet's structure.
+# awk functions shared by the two Markdown-aware programs below. Fenced code
+# blocks per CommonMark: ``` or ~~~ (up to 3 spaces indented) opens a fence
+# that is closed only by a run of the same character at least as long.
+# track_fence(line) updates the fence/fchar/flen state and returns 1 if the
+# line is itself a fence marker (opening or closing).
+awk_fences='
+  function fence_marker(s,   m) {
+    if (!match(s, /^ ? ? ?(```+|~~~+)/)) return ""
+    m = substr(s, RSTART, RLENGTH); sub(/^ +/, "", m); return m
+  }
+  function track_fence(s,   m) {
+    m = fence_marker(s)
+    if (!fence && m != "") { fence = 1; fchar = substr(m, 1, 1); flen = length(m); return 1 }
+    if (fence && m != "" && substr(m, 1, 1) == fchar && length(m) >= flen && s ~ /^[ \t`~]+$/) { fence = 0; return 1 }
+    return 0
+  }
+'
+
+# The one place that understands the cheatsheet's sections.
 #   headings ""      → prints every "## " heading name, one per line
 #   headings "Name"  → prints that section (heading through the line before the
 #                      next "## "), first match wins; exit status 1 if no match
 # Matching is literal and case-insensitive; the name travels via the
 # environment so nothing (awk -v, grep) re-interprets backslashes or regex
-# characters in it. Headings inside fenced code blocks are ignored: a fence
-# (``` or ~~~, up to 3 spaces indented) is closed only by a run of the same
-# character at least as long, per CommonMark. Names are trimmed of trailing
-# whitespace, closing #s and CR.
+# characters in it. Headings inside fenced code blocks are ignored. Names are
+# trimmed of surrounding whitespace, closing #s and CR.
 headings() {
-  want="$1" LC_ALL=C awk '
+  want="$1" LC_ALL=C awk "$awk_fences"'
     function name(s) {
-      s = substr(s, 4); sub(/\r$/, "", s); sub(/[ \t]+$/, "", s)
-      sub(/[ \t]+#+$/, "", s); sub(/[ \t]+$/, "", s); return s
-    }
-    function fence_marker(s,   m) {          # "```"/"~~~~" at line start, or ""
-      if (!match(s, /^ {0,3}(`{3,}|~{3,})/)) return ""
-      m = substr(s, RSTART, RLENGTH); sub(/^ +/, "", m); return m
+      s = substr(s, 4); sub(/[ \t]+$/, "", s); sub(/[ \t]+#+$/, "", s)
+      sub(/[ \t]+$/, "", s); sub(/^[ \t]+/, "", s); return s
     }
     BEGIN { want = tolower(ENVIRON["want"]) }
+    { sub(/\r$/, "") }
     {
-      m = fence_marker($0)
-      if (!fence && m != "") {
-        fence = 1; fchar = substr(m, 1, 1); flen = length(m)
-      } else if (fence && m != "" && substr(m, 1, 1) == fchar && length(m) >= flen && $0 ~ /^[ \t`~]+$/) {
-        fence = 0
-      } else if (!fence && /^## /) {
+      if (track_fence($0)) { }
+      else if (!fence && /^## /) {
         n = name($0)
         if (n == "") next
         if (want == "") { print n; next }
@@ -69,26 +78,36 @@ headings() {
     }
     want != "" && on { print }
     END { if (want != "") exit !found }
-  ' "$file"
+  ' < "$file"
 }
 sections()     { headings ""; }
 section_text() { headings "$1"; }
 
-# Rewrite Markdown that Alfred'\''s Text View can'\''t render into things it can:
-#  - the nav line of [Section](#anchor) links near the top is dropped
-#    (the renderer doesn'\''t follow in-document anchors)
-#  - tables become bullet lists, "- cell — cell — cell", header and separator
-#    rows dropped (the renderer doesn'\''t do tables)
+# Rewrite Markdown that Alfred's Text View can't render into things it can
+# (stdin → stdout):
+#  - tables become bullet lists, "- cell — cell — cell"; the separator row is
+#    dropped, and so is the header row unless the table has 3+ columns, where
+#    it survives as a bold bullet (the renderer doesn't do tables)
+#  - a line consisting only of [text](#anchor) links, e.g. the nav row at the
+#    top of cheatsheet.md, is dropped (the renderer doesn't follow anchors)
 #  - fences opened with 4+ backticks become indented code blocks (the renderer
-#    doesn'\''t do nested fences)
+#    doesn't do nested fences)
 for_alfred() {
-  LC_ALL=C awk '
+  LC_ALL=C awk "$awk_fences"'
     function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
-    /^````/ { inbig = !inbig; next }
-    inbig   { print "    " $0; next }
-    /^```/  { infence = !infence; print; next }
-    infence { print; next }
-    NR <= 4 && /^\[[^]]*\]\(#/ && /\)$/ { skipblank = 1; next }
+    { sub(/\r$/, ""); gsub(/[\001-\010\013\014\016-\037]/, "") }   # C0 controls never render; \001 is our placeholder below
+    {
+      was = fence
+      if (track_fence($0)) {
+        intable = 0
+        if (!was) big = (fchar == "`" && flen >= 4)   # opening marker
+        if (!big) print
+        if (was) big = 0                              # closing marker
+        next
+      }
+      if (fence) { print (big ? "    " : "") $0; next }
+    }
+    /^(\[[^]]*\]\(#[^)]*\)[ \t·|—–-]*)+$/ { skipblank = 1; next }
     skipblank && /^$/ { skipblank = 0; next }
     { skipblank = 0 }
     /^\|/ {
@@ -97,9 +116,14 @@ for_alfred() {
       sub(/^\|/, "", line); sub(/\|[ \t]*$/, "", line)
       n = split(line, c, "|")
       if (n >= 1 && trim(c[1]) ~ /^:?-+:?$/) next   # separator row
-      if (!intable) { intable = 1; next }            # header row
+      header = !intable; intable = 1
+      if (header && n <= 2) next
       out = ""
-      for (i = 1; i <= n; i++) { cell = trim(c[i]); gsub(/\001/, "|", cell); out = out (i > 1 ? " — " : "") cell }
+      for (i = 1; i <= n; i++) {
+        cell = trim(c[i]); gsub(/\001/, "|", cell)
+        if (header && cell != "") cell = "**" cell "**"
+        out = out (i > 1 ? " — " : "") cell
+      }
       print "- " out
       next
     }

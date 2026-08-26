@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script Filter for the "md" keyword. Lists the cheatsheet's sections (plus
+# Script Filter for the keyword (default "mdc", set in the Configure panel). Lists the cheatsheet's sections (plus
 # "Whole cheatsheet"); Alfred filters them as you type. Each item sets the
 # `section` variable, which show.sh reads to render only that section. `arg`
 # carries the same name purely so Alfred treats the item as actionable.

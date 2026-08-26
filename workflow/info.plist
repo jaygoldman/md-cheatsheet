@@ -51,7 +51,7 @@
 	<key>createdby</key>
 	<string>Jay Goldman · after Aaron Schiff's md-cheatsheet</string>
 	<key>description</key>
-	<string>System-wide Markdown cheatsheet popup (⌃⌥M, or “md [section]”)</string>
+	<string>System-wide Markdown cheatsheet popup (⌃⌥M, or a keyword per section)</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -105,7 +105,7 @@
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
-				<string>md</string>
+				<string>{var:keyword}</string>
 				<key>queuedelaycustom</key>
 				<integer>1</integer>
 				<key>queuedelayimmediatelyinitially</key>
@@ -202,7 +202,7 @@ open -- "${f/#\~/$HOME}"</string>
 
 Press ⌃⌥M anywhere to pop up a rendered Markdown syntax cheatsheet; Esc closes it, ⌘↩ opens the file so you can edit it.
 
-Type `md` in Alfred to pick a single section (e.g. `md tables`) or ⏎ for the whole sheet.
+Type the keyword (default `mdc`) in Alfred to pick a single section (e.g. `mdc tables`) or ⏎ for the whole sheet.
 
 By default the copy of `cheatsheet.md` bundled in this workflow is shown. To use your own file (e.g. a clone of the repo), set **Cheatsheet file** in the Configure panel.
 
@@ -223,7 +223,7 @@ Requires Alfred 5.5 or later (Text View).</string>
 		<key>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</key>
 		<dict>
 			<key>note</key>
-			<string>md [section] — list.sh lists the ## headings</string>
+			<string>{var:keyword} [section] — list.sh lists the ## headings</string>
 			<key>xpos</key>
 			<real>40.0</real>
 			<key>ypos</key>
@@ -248,6 +248,27 @@ Requires Alfred 5.5 or later (Text View).</string>
 	</dict>
 	<key>userconfigurationconfig</key>
 	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>mdc</string>
+				<key>placeholder</key>
+				<string>mdc</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The Alfred keyword that lists the cheatsheet's sections. Three characters or more.</string>
+			<key>label</key>
+			<string>Keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword</string>
+		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
