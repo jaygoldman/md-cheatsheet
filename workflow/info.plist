@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.jaygoldman.alfred.md-cheatsheet</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>6C1F0F1E-3B0B-4B8A-9D2E-1A6C2E9B7F01</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D7E2A4B6-1C93-4F58-B2D6-4D9F5A3E8B04</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>Open cheatsheet.md to edit</string>
+				<key>vitoclose</key>
+				<true/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Jay Goldman · after Aaron Schiff's md-cheatsheet</string>
+	<key>description</key>
+	<string>System-wide Markdown cheatsheet popup (⌃⌥M or “md”)</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>Markdown Cheatsheet</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>0</integer>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>46</integer>
+				<key>hotmod</key>
+				<integer>786432</integer>
+				<key>hotstring</key>
+				<string>M</string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>6C1F0F1E-3B0B-4B8A-9D2E-1A6C2E9B7F01</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>md</string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Show the Markdown syntax cheatsheet</string>
+				<key>text</key>
+				<string>Markdown Cheatsheet</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>behaviour</key>
+				<integer>2</integer>
+				<key>fontmode</key>
+				<integer>0</integer>
+				<key>fontsizing</key>
+				<integer>0</integer>
+				<key>footertext</key>
+				<string>⎋ Close</string>
+				<key>inputfile</key>
+				<string>show.sh</string>
+				<key>inputtype</key>
+				<integer>1</integer>
+				<key>loadingtext</key>
+				<string>Loading cheatsheet…</string>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>scriptinput</key>
+				<integer>0</integer>
+				<key>spellchecking</key>
+				<integer>0</integer>
+				<key>stackview</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.text</string>
+			<key>uid</key>
+			<string>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string># ⌘↩ from the Text View: open the cheatsheet in your default Markdown editor.
+f="${cheatsheet_file:-$PWD/cheatsheet.md}"
+open -- "${f/#\~/$HOME}"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>5</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>D7E2A4B6-1C93-4F58-B2D6-4D9F5A3E8B04</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># Markdown Cheatsheet
+
+Press ⌃⌥M anywhere (or type `md` in Alfred) to pop up a rendered Markdown syntax cheatsheet. Esc closes it; ⌘↩ opens the cheatsheet file so you can edit it.
+
+By default the copy of `cheatsheet.md` bundled in this workflow is shown. To use your own file (e.g. a clone of the repo), set **Cheatsheet file** in the Configure panel.
+
+An Alfred port of Aaron Schiff's Hammerspoon + pandoc md-cheatsheet (https://github.com/aaronschiff/md-cheatsheet) — the cheatsheet content is his.
+
+Requires Alfred 5.5 or later (Text View).</string>
+	<key>uidata</key>
+	<dict>
+		<key>6C1F0F1E-3B0B-4B8A-9D2E-1A6C2E9B7F01</key>
+		<dict>
+			<key>note</key>
+			<string>⌃⌥M — change it here if it clashes</string>
+			<key>xpos</key>
+			<real>40.0</real>
+			<key>ypos</key>
+			<real>60.0</real>
+		</dict>
+		<key>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</key>
+		<dict>
+			<key>xpos</key>
+			<real>40.0</real>
+			<key>ypos</key>
+			<real>200.0</real>
+		</dict>
+		<key>D7E2A4B6-1C93-4F58-B2D6-4D9F5A3E8B04</key>
+		<dict>
+			<key>xpos</key>
+			<real>560.0</real>
+			<key>ypos</key>
+			<real>130.0</real>
+		</dict>
+		<key>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</key>
+		<dict>
+			<key>note</key>
+			<string>Runs show.sh → renders cheatsheet.md as Markdown</string>
+			<key>xpos</key>
+			<real>300.0</real>
+			<key>ypos</key>
+			<real>130.0</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string>Leave empty to use the bundled cheatsheet.md</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Optional. A Markdown file to show instead of the bundled cheatsheet.md — e.g. the cheatsheet.md in your clone of the repo, so your edits survive workflow updates.</string>
+			<key>label</key>
+			<string>Cheatsheet file</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>cheatsheet_file</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/jaygoldman/md-cheatsheet</string>
+</dict>
+</plist>
