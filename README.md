@@ -14,6 +14,8 @@ implementation for Alfred's built-in Markdown
 there is nothing to install besides Alfred, and adds section navigation and
 more content.
 
+![The cheatsheet popup, opened with ⌃⌥M](images/popup.png)
+
 ## Installation
 
 Requires macOS and Alfred 5.5 or later with the
@@ -37,6 +39,8 @@ keyword can be changed in **Configure Workflow…**.
 | `mdc tables` (in Alfred) | List matching sections; ⏎ shows just that section |
 | Esc | Close the popup |
 | ⌘↩ (in the popup) | Open the cheatsheet file in your default Markdown editor |
+
+![Typing mdc in Alfred lists the cheatsheet's sections](images/sections.png)
 
 The section list is built from the `## ` headings in the cheatsheet, so any
 section you add to the file shows up in `mdc` automatically.
@@ -131,10 +135,10 @@ appends, in roughly descending order of how often you'll need them:
   headings, emphasis, inline code, code blocks, lists and blockquotes, but
   not tables, HTML, in-document anchor links or nested code fences — so the
   workflow rewrites tables as bullet lists and nested fences as indented
-  blocks before handing the text to Alfred. A few pandoc-only extensions the
-  original content demonstrates (subscript `H~2~O`, superscript `X^2^`,
-  heading IDs, definition lists, footnotes) show their raw syntax in the
-  rendered column. The syntax column is still correct — that's the point of a
+  blocks before handing the text to Alfred. Strikethrough and a few
+  pandoc-only extensions the original content demonstrates (subscript
+  `H~2~O`, superscript `X^2^`, heading IDs, definition lists, footnotes)
+  show their raw syntax in the rendered column. The syntax column is still correct — that's the point of a
   cheatsheet — and the **HTML fallbacks** section gives portable alternatives.
 - **Light/dark** follows Alfred's theme instead of a custom CSS block.
 
