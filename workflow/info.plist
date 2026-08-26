@@ -51,7 +51,7 @@
 	<key>createdby</key>
 	<string>Jay Goldman · after Aaron Schiff's md-cheatsheet</string>
 	<key>description</key>
-	<string>System-wide Markdown cheatsheet popup (⌃⌥M or “md”)</string>
+	<string>System-wide Markdown cheatsheet popup (⌃⌥M, or “md [section]”)</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -64,7 +64,7 @@
 				<key>action</key>
 				<integer>0</integer>
 				<key>argument</key>
-				<integer>0</integer>
+				<integer>4</integer>
 				<key>focusedappvariable</key>
 				<false/>
 				<key>focusedappvariablename</key>
@@ -92,25 +92,51 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>alfredfiltersresults</key>
+				<true/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<false/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
 				<key>argumenttype</key>
-				<integer>2</integer>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
 				<key>keyword</key>
 				<string>md</string>
-				<key>skipuniversalaction</key>
+				<key>queuedelaycustom</key>
+				<integer>1</integer>
+				<key>queuedelayimmediatelyinitially</key>
 				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Reading cheatsheet…</string>
+				<key>script</key>
+				<string></string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string>list.sh</string>
 				<key>subtext</key>
-				<string>Show the Markdown syntax cheatsheet</string>
-				<key>text</key>
+				<string>⏎ whole cheatsheet, or type a section name</string>
+				<key>title</key>
 				<string>Markdown Cheatsheet</string>
+				<key>type</key>
+				<integer>8</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
+			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
 			<string>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</string>
 			<key>version</key>
-			<integer>1</integer>
+			<integer>3</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -174,11 +200,13 @@ open -- "${f/#\~/$HOME}"</string>
 	<key>readme</key>
 	<string># Markdown Cheatsheet
 
-Press ⌃⌥M anywhere (or type `md` in Alfred) to pop up a rendered Markdown syntax cheatsheet. Esc closes it; ⌘↩ opens the cheatsheet file so you can edit it.
+Press ⌃⌥M anywhere to pop up a rendered Markdown syntax cheatsheet; Esc closes it, ⌘↩ opens the file so you can edit it.
+
+Type `md` in Alfred to pick a single section (e.g. `md tables`) or ⏎ for the whole sheet.
 
 By default the copy of `cheatsheet.md` bundled in this workflow is shown. To use your own file (e.g. a clone of the repo), set **Cheatsheet file** in the Configure panel.
 
-An Alfred port of Aaron Schiff's Hammerspoon + pandoc md-cheatsheet (https://github.com/aaronschiff/md-cheatsheet) — the cheatsheet content is his.
+An Alfred port of Aaron Schiff's Hammerspoon + pandoc md-cheatsheet (https://github.com/aaronschiff/md-cheatsheet) — the original cheatsheet content is his.
 
 Requires Alfred 5.5 or later (Text View).</string>
 	<key>uidata</key>
@@ -194,6 +222,8 @@ Requires Alfred 5.5 or later (Text View).</string>
 		</dict>
 		<key>A2D4E8C0-5F31-4C77-8E9A-2B7D3F1C6E02</key>
 		<dict>
+			<key>note</key>
+			<string>md [section] — list.sh lists the ## headings</string>
 			<key>xpos</key>
 			<real>40.0</real>
 			<key>ypos</key>
@@ -209,7 +239,7 @@ Requires Alfred 5.5 or later (Text View).</string>
 		<key>F3B9C7A1-8E42-4D6B-A1C5-3C8E4F2D7A03</key>
 		<dict>
 			<key>note</key>
-			<string>Runs show.sh → renders cheatsheet.md as Markdown</string>
+			<string>Runs show.sh → renders cheatsheet.md (or one section) as Markdown</string>
 			<key>xpos</key>
 			<real>300.0</real>
 			<key>ypos</key>
@@ -243,7 +273,7 @@ Requires Alfred 5.5 or later (Text View).</string>
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>1.0.0</string>
+	<string>1.1.0</string>
 	<key>webaddress</key>
 	<string>https://github.com/jaygoldman/md-cheatsheet</string>
 </dict>

@@ -1,39 +1,22 @@
 #!/bin/bash
-# Text View script for the Markdown Cheatsheet Alfred workflow.
+# Text View script. Prints {"response": "<markdown>", "footer": "<text>"};
+# the Text View renders "response" as Markdown.
 #
-# Alfred runs this with the workflow folder as the working directory and
-# expects JSON on stdout: {"response": "<markdown>", "footer": "<text>"}.
-# The Text View renders "response" as Markdown.
-#
-# The cheatsheet shown is, in order of preference:
-#   1. $cheatsheet_file  — set in the workflow's Configure panel (a path to
-#      your own copy, e.g. a clone of this repo), or
-#   2. cheatsheet.md     — the copy bundled inside the workflow.
+# With no $section the whole cheatsheet is shown (the ⌃⌥M hotkey, or "md" ⏎).
+# The "md" Script Filter (list.sh) sets the `section` variable on each item so
+# only that section is shown. Deliberately not argv: the hotkey would hand us
+# the macOS selection as $1.
 
-set -u -o pipefail
-
-file="${cheatsheet_file:-cheatsheet.md}"
-file="${file/#\~/$HOME}" # the picker stores absolute paths, but a typed ~ should work too
-
-# stdin: markdown, $FOOTER: footer text → JSON on stdout. Built by hand so the
-# workflow has no jq/python dependency. iconv drops any bytes that aren't valid
-# UTF-8 (Alfred rejects JSON that isn't); awk escapes what JSON requires and
-# strips the remaining C0 control characters, which JSON forbids unescaped.
-to_json() {
-  iconv -c -f UTF-8 -t UTF-8 | LC_ALL=C awk '
-    function esc(s) {
-      gsub(/\\/, "\\\\", s); gsub(/"/, "\\\"", s)
-      gsub(/\t/, "\\t", s);  gsub(/\r/, "\\r", s)
-      gsub(/[\001-\010\013\014\016-\037]/, "", s)
-      return s
-    }
-    BEGIN { ORS = ""; printf "{\"response\":\"" }
-    { print esc($0) "\\n" }
-    END { printf "\",\"footer\":\"%s\"}", esc(ENVIRON["FOOTER"]) }'
+cd "$(dirname "$0")" && source ./lib.sh || {
+  printf '{"response":"# Workflow broken\\n\\n`lib.sh` is missing — reinstall the workflow.","footer":"⎋ Close"}'
+  exit 0
 }
+section="${section:-}"
 
-not_found() {
-  FOOTER="⎋ Close" to_json <<EOF
+# A function rather than a heredoc inside "$( … )": bash 3.2 (Alfred's
+# /bin/bash) mis-parses the apostrophe in "workflow's" inside $( ).
+not_found_md() {
+  cat <<EOF
 # Cheatsheet not found
 
 Could not read \`$file\`.
@@ -43,13 +26,21 @@ Markdown file, or clear it to use the bundled copy.
 EOF
 }
 
-if [[ ! -f "$file" || ! -r "$file" ]]; then
-  not_found
+if ! have_file; then
+  printf '{"response":"%s","footer":"⎋ Close"}' "$(not_found_md | json_body)"
   exit 0
 fi
 
-if ! out=$(FOOTER="⎋ Close  ·  ⌘↩ Open $(basename "$file") to edit" to_json < "$file"); then
-  not_found
+name=$(basename "$file")
+if [[ -n "$section" ]] && text=$(section_text "$section"); then
+  footer="⎋ Close  ·  ⌘↩ Open $name to edit  ·  “md” for other sections"
+else
+  text=$(cat "$file")
+  footer="⎋ Close  ·  ⌘↩ Open $name to edit"
+fi
+
+if ! body=$(printf '%s\n' "$text" | for_alfred | json_body); then
+  printf '{"response":"%s","footer":"⎋ Close"}' "$(not_found_md | json_body)"
   exit 0
 fi
-printf '%s' "$out"
+printf '{"response":"%s","footer":"%s"}' "$body" "$(printf '%s' "$footer" | json_body)"
